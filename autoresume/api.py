@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from autoresume.models import Job, Accomplishment, Skill, Company
+from autoresume.models import Job, Accomplishment, Skill, Company, User
 
 api = Blueprint('api/v1', __name__, url_prefix='/api/v1')
 
@@ -28,6 +28,19 @@ def create_company():
     company = Company.set_company(company_data)
     return jsonify(company)
 
+
+@api.route('/user/login', methods=['POST'])
+def login_user():
+    user_data = request.get_json() or {}
+    response = User.login(user_data)
+    return jsonify(response)
+
+
+@api.route('/user/create', methods=['POST'])
+def create_user():
+    user_data = request.get_json() or {}
+    user = User.create_user(user_data)
+    return jsonify(user)
 
 
 #  @api.route('/accomplishments')

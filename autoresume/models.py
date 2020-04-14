@@ -1,16 +1,89 @@
-from autoresume import db
-from autoresume.error_handlers import InvalidData
+import copy
+from autoresume import db, login
+from autoresume.error_handlers import InvalidData, InvalidCredentials
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin, current_user, login_user
 
 
-class User(db.Model):
+@login.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80), nullable=False)
     jobs = db.relationship('Job', backref='user', lazy=True)
+    email = db.Column(db.String(80), nullable=False)
     password_hash = db.Column(db.String(128))
 
-    def set_user(self, id, user):
+    @staticmethod
+    def create_user(user):
+        user = User.sanitize_user(user)
+        stored_user = User.query.filter_by(email=user.get('email')).first()
+        if stored_user:
+            raise InvalidData('User with this email already exists')
+        else:
+            first_name = user.get('first_name')
+            last_name = user.get('last_name')
+            email = user.get('email')
+            password = user.get('password')
+
+            new_user = User(first_name=first_name, last_name=last_name, email=email)
+            new_user.set_password(password)
+
+            db.session.add(new_user)
+            db.session.commit()
+
+            serialized_user = User.serialize_user(new_user)
+            return serialized_user
+
+    @staticmethod
+    def login(user_data):
+        if current_user.is_authenticated:
+            return {'status': 'success', 'user': User.serialize_user(current_user)}
+        user = User.query.filter_by(email=user_data.get('email')).first()
+        if user is None or not user.check_password(user_data.get('password')):
+            raise InvalidCredentials('Incorrect credentials')
+        else:
+            success_message = {'status': 'success', 'user': User.serialize_user(user)}
+            login_user(user, remember=user_data.get('remember') or False)
+            return success_message
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    @classmethod
+    def sanitize_user(cls, user):
+        error = ''
+        if 'email' not in user:
+            error += 'email not provided'
+        if 'first_name' not in user:
+            error += 'first name is not provided'
+        if 'last_name' not in user:
+            error += 'last name is not provided'
+        if 'password' not in user:
+            error += 'password is not provided'
+
+        if error:
+            raise InvalidData(error)
+
+        return user
+
+    @staticmethod
+    def serialize_user(user):
+        return {
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+        }
+
+    def set_user(self, user):
         pass
 
     def get_user(self, id):
@@ -18,12 +91,6 @@ class User(db.Model):
 
     def get_users(self, filter_args):
         pass
-
-    # def set_password(self, password):
-    #     pass
-    #
-    # def check_password(self, password):
-    #     pass
 
 
 class Job(db.Model):
@@ -41,7 +108,6 @@ class Job(db.Model):
         job['end_date'] = datetime.fromisoformat(job['end_date'])
 
         company = Company.get_company(job.get('company_id'))
-        # import pdb; pdb.set_trace()
 
         if company:
             new_job = cls(**job)
