@@ -3,7 +3,7 @@ from autoresume import db, login
 from autoresume.error_handlers import InvalidData, InvalidCredentials
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin, current_user, login_user
+from flask_login import UserMixin, current_user, login_user, logout_user
 
 
 @login.user_loader
@@ -39,6 +39,10 @@ class User(UserMixin, db.Model):
 
             serialized_user = User.serialize_user(new_user)
             return serialized_user
+
+    @staticmethod
+    def logout():
+        logout_user()
 
     @staticmethod
     def login(user_data):
@@ -81,6 +85,7 @@ class User(UserMixin, db.Model):
             'first_name': user.first_name,
             'last_name': user.last_name,
             'email': user.email,
+            'id': user.id,
         }
 
     def set_user(self, user):
@@ -97,6 +102,7 @@ class Job(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     start_date = db.Column(db.DateTime, nullable=False)
     end_date = db.Column(db.DateTime, nullable=True)
+    description = db.Column(db.String(256), nullable=True)
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     accomplishments = db.relationship('Accomplishment', backref='role', lazy=True)
@@ -129,7 +135,8 @@ class Job(db.Model):
         return {
             'end_date': job.end_date,
             'start_date': job.start_date,
-            'company': '/company/{}'.format(job.id),
+            'description': job.description,
+            'company': '/company/{}'.format(job.company_id),
         }
 
     @classmethod

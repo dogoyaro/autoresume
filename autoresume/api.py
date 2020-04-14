@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from flask_login import login_required, current_user
 from autoresume.models import Job, Accomplishment, Skill, Company, User
 
 api = Blueprint('api/v1', __name__, url_prefix='/api/v1')
@@ -10,19 +11,24 @@ def index():
 
 
 @api.route('/jobs', methods=['POST'])
+@login_required
 def get_jobs():
     filter_data = request.get_json() or {}
+    filter_data['user_id'] = current_user.id
     jobs = Job.get_jobs(filter_args=filter_data)
     return jsonify(jobs)
 
 
 @api.route('/jobs/create', methods=['POST'])
+@login_required
 def create_job():
     job_data = request.get_json() or {}
+    job_data['user_id'] = current_user.id
     return Job.set_job(job_data)
 
 
 @api.route('/company/create', methods=['POST'])
+@login_required
 def create_company():
     company_data = request.get_json() or {}
     company = Company.set_company(company_data)
@@ -34,6 +40,12 @@ def login_user():
     user_data = request.get_json() or {}
     response = User.login(user_data)
     return jsonify(response)
+
+
+@api.route('/user/logout')
+def logout_user():
+    User.logout()
+    return jsonify({'success': True})
 
 
 @api.route('/user/create', methods=['POST'])
