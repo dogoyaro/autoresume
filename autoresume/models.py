@@ -200,6 +200,59 @@ class Accomplishment(db.Model):
     skills = db.relationship('Skill', secondary=skills, backref=db.backref('accomplishments', lazy=True),
                              lazy='subquery')
 
+    @classmethod
+    def create_accomplishment(cls, accomplishment):
+        # sanitize accomplishment
+        accomplishment = cls.sanitize_accomplishment(accomplishment)
+        description = accomplishment.get('description')
+        rank = accomplishment.get('rank')
+        job_id = accomplishment.get('job_id')
+        acc_skills = accomplishment.get('skills')
+
+        job = Job.query.get(job_id)
+        if not job:
+            raise InvalidData('Invalid job_id provided')
+
+        accomplishment = cls(description=description, rank=rank, job_id=job_id)
+        for skill in acc_skills:
+            accomplishment.add_skill(skill)
+
+        db.session.add(accomplishment)
+        db.session.commit()
+        serialized_accomplishment = cls.serialize_accomplishment(accomplishment)
+        return serialized_accomplishment
+        pass
+
+    def add_skill(self, skill):
+        skill = Skill.query.filter_by(name=skill).first()
+        if not skill:
+            skill = Skill.create_skill(skill)
+        self.skills.add(skill)
+
+    @classmethod
+    def sanitize_accomplishment(cls, accomplishment):
+        error = ''
+        if 'rank' not in accomplishment:
+            error += 'rank not provided'
+        if 'job_id' not in accomplishment:
+            error += ' job_id not provided'
+        if 'skills' not in accomplishment:
+            error += ' skills not provided'
+
+        if error:
+            raise InvalidData(error)
+
+        return accomplishment
+
+    @classmethod
+    def serialize_accomplishment(cls, accomplishment):
+        return {
+            'rank': accomplishment.rank,
+            'skills': [skill.name for skill in accomplishment.skills],
+            'job_id': accomplishment.job_id
+            'description': accomplishment.description
+        }
+
     def set_accomplishments(self, id, accomplishment):
         pass
 
@@ -214,3 +267,10 @@ class Skill(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     proficiency_level = db.Column(db.Integer, nullable=True)
+
+    @classmethod
+    def create_skill(cls, skill):
+        if 'name' not in skill:
+            raise InvalidData('name is not provided')
+
+        return cls(**skill)
