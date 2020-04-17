@@ -55,7 +55,7 @@ def create_user():
     return jsonify(user)
 
 
-@api.route('/accomplishment/create', method=['POST'])
+@api.route('/accomplishment/create', methods=['POST'])
 def create_accomplishment():
     accomplishment_data = request.get_json() or {}
     accomplishment = Accomplishment.create_accomplishment(accomplishment_data)

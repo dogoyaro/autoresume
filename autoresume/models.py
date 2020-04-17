@@ -223,11 +223,11 @@ class Accomplishment(db.Model):
         return serialized_accomplishment
         pass
 
-    def add_skill(self, skill):
-        skill = Skill.query.filter_by(name=skill).first()
+    def add_skill(self, skill_name):
+        skill = Skill.query.filter_by(name=skill_name).first()
         if not skill:
-            skill = Skill.create_skill(skill)
-        self.skills.add(skill)
+            skill = Skill.create_skill({'name': skill_name})
+        self.skills.append(skill)
 
     @classmethod
     def sanitize_accomplishment(cls, accomplishment):
@@ -238,6 +238,8 @@ class Accomplishment(db.Model):
             error += ' job_id not provided'
         if 'skills' not in accomplishment:
             error += ' skills not provided'
+        if 'description' not in accomplishment:
+            error += ' description not provided'
 
         if error:
             raise InvalidData(error)
@@ -249,7 +251,7 @@ class Accomplishment(db.Model):
         return {
             'rank': accomplishment.rank,
             'skills': [skill.name for skill in accomplishment.skills],
-            'job_id': accomplishment.job_id
+            'job_id': accomplishment.job_id,
             'description': accomplishment.description
         }
 
@@ -270,6 +272,8 @@ class Skill(db.Model):
 
     @classmethod
     def create_skill(cls, skill):
+        # import pdb; pdb.set_trace()
+        # print(skill)
         if 'name' not in skill:
             raise InvalidData('name is not provided')
 
