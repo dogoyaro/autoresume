@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Layout, List, Input, Button } from 'antd';
 import GenericHeader from '../GenericHeader';
 import WinCard from '../WinCard';
+import AddWin from '../AddWin';
 
 const { Content } = Layout;
 const { Search } = Input;
@@ -141,15 +142,9 @@ const SearchInput = (props: SearchInputProps) => {
       placeholder="search your accomplishments"
       onSearch={(value: string) => searchParam(value)}
       size="large"
-      // onChange={(value: string) => setSearchParam(value)}
-      // value={searchParam}
       enterButton
     />
   ); 
-}
-
-const AddWin = () => {
-  return <Button type="primary" size="large">Add Win</Button>
 }
 
 const WinsGrid = (props: { wins: Win[] }) => {
