@@ -98,7 +98,7 @@ const dummyWins = [
 const Wins = (props: WinsProps) => {
   const { collapsed, setSiderCollapse } = props;
   return (
-    <Layout>
+    <Layout style={{ height: '100vh' }}>
       <WinsHeader
         collapsed={collapsed}
         setSiderCollapse={setSiderCollapse}
@@ -119,7 +119,7 @@ const WinsHeader = (props: WinHeaderProps) => {
         style={{
           display: 'flex',
           flexDirection: 'row',
-          justifyContent: 'space-between',
+          justifyContent: 'flex-end',
           alignItems: 'center',
           flex: 4,
         }}
@@ -127,7 +127,7 @@ const WinsHeader = (props: WinHeaderProps) => {
         <SearchInput
           searchParam={searchParam}
         />
-        <div style={{ padding: '0 20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', padding: '0 10px' }}>
           <AddWin />
         </div>
       </div>
@@ -138,12 +138,13 @@ const WinsHeader = (props: WinHeaderProps) => {
 const SearchInput = (props: SearchInputProps) => {
   const { searchParam } = props;
   return (
-    <Search
-      placeholder="search your accomplishments"
-      onSearch={(value: string) => searchParam(value)}
-      size="large"
-      enterButton
-    />
+    <div style={{ display: 'flex', flex: 1, alignItems: 'center' }}>
+      <Search
+        placeholder="search your accomplishments"
+        onSearch={(value: string) => searchParam(value)}
+        size="large"
+      />
+    </div>
   ); 
 }
 

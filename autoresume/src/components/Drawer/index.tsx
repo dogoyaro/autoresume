@@ -25,7 +25,14 @@ const Drawer = (props: DrawerProps) => {
   const { collapsed } = props;
 
   return (
-    <Sider trigger={null} theme="light" collapsible collapsed={collapsed}>
+    <Sider
+      trigger={null}
+      theme="light"
+      collapsible
+      collapsed={collapsed}
+      // collapsedWidth="0"
+      breakpoint="lg"
+    >
       <div
         className="logo"
         style={{ height: 32, margin: 16, textAlign: 'center' }}
