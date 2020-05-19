@@ -44,7 +44,7 @@ const Skills = ({ skills }: { skills: { name: string }[] }) => {
 export default WinCard;
 
 // TODO: Move types to declaration files. What even are declaration files?
-type Win = {
+export type Win = {
   description: string,
   skills: Skill[],
   date: string,

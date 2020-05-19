@@ -3,9 +3,9 @@ import { Layout, List, Input, Button } from 'antd';
 import GenericHeader from '../GenericHeader';
 import WinCard from '../WinCard';
 import AddWin from '../AddWin';
+import SearchInput, { SearchInputProps } from '../SearchInput';
 
 const { Content } = Layout;
-const { Search } = Input;
 
 const dummyWins = [
   {
@@ -103,6 +103,7 @@ const Wins = (props: WinsProps) => {
         collapsed={collapsed}
         setSiderCollapse={setSiderCollapse}
         searchParam={() => {}}
+        placeholder="Search Your Wins"
       />
       <Content style={{ margin: '24px 16px', padding: 24, minHeight: 280 }}>
         <WinsGrid wins={dummyWins} />
@@ -112,7 +113,7 @@ const Wins = (props: WinsProps) => {
 };
 
 const WinsHeader = (props: WinHeaderProps) => {
-  const { collapsed, setSiderCollapse, searchParam } = props;
+  const { collapsed, setSiderCollapse, searchParam, placeholder } = props;
   return (
     <GenericHeader collapsed={collapsed} setSiderCollapse={setSiderCollapse}>
       <div
@@ -125,6 +126,7 @@ const WinsHeader = (props: WinHeaderProps) => {
         }}
       >
         <SearchInput
+          placeholder={placeholder}
           searchParam={searchParam}
         />
         <div style={{ display: 'flex', alignItems: 'center', padding: '0 10px' }}>
@@ -133,19 +135,6 @@ const WinsHeader = (props: WinHeaderProps) => {
       </div>
     </GenericHeader>
   );
-}
-
-const SearchInput = (props: SearchInputProps) => {
-  const { searchParam } = props;
-  return (
-    <div style={{ display: 'flex', flex: 1, alignItems: 'center' }}>
-      <Search
-        placeholder="search your accomplishments"
-        onSearch={(value: string) => searchParam(value)}
-        size="large"
-      />
-    </div>
-  ); 
 }
 
 const WinsGrid = (props: { wins: Win[] }) => {
@@ -191,7 +180,6 @@ type WinsProps = {
   setSiderCollapse: Function;
 };
 
-type SearchInputProps = { searchParam: Function };
 
 // TODO: Do not use Function why?
 type WinHeaderProps = WinsProps & SearchInputProps;

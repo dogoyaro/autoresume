@@ -30,7 +30,6 @@ const Drawer = (props: DrawerProps) => {
       theme="light"
       collapsible
       collapsed={collapsed}
-      // collapsedWidth="0"
       breakpoint="lg"
     >
       <div
