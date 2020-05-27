@@ -11,7 +11,7 @@ import {
 
 import constants from '../../constants';
 
-const { WINS_PATH, ROLES_PATH, GET_PDF_PATH, SETTINGS_PATH } = constants;
+const { WINS_PATH, ROLES_PATH, SUMMARY, SETTINGS_PATH } = constants;
 
 
 const { Sider } = Layout;
@@ -57,7 +57,7 @@ const Drawer = (props: DrawerProps) => {
         <Menu.Item key="3">
           <FilePdfOutlined />
           <span>Pdf</span>
-          <Link to={GET_PDF_PATH} />
+          <Link to={SUMMARY} />
         </Menu.Item>
         <Menu.Item key="4">
           <SettingOutlined />

@@ -16,7 +16,7 @@ const AddRoleModal = (props: AddRoleModalProps) => {
       bodyStyle={{ padding: 40 }}
       width="40%"
     >
-      <RoleForm handleFormSubmit={() => {}} showButton={false} size="middle" />
+      <RoleForm handleFormSubmit={() => {}} showButton={false} size="large" />
     </Modal>
   );
 };
