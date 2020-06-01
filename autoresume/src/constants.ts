@@ -7,6 +7,7 @@ export default {
 
 export const draggableTypes = {
   PREVIEW_TAB_BAR: 'preview tab bar',
+  PREVIEW_CONTENT_CARD: 'preview content card',
 };
 
 export const PREVIEW_CONTENT_TYPES = {

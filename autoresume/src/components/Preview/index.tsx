@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Tabs } from 'antd';
 import { TabsProps } from 'antd/lib/tabs';
-import { DragObjectWithType, DndProvider, useDrag, useDrop } from 'react-dnd';
+import { DndProvider } from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
-import { PREVIEW_CONTENT_TYPES, draggableTypes } from '../../constants';
+import { PREVIEW_CONTENT_TYPES, } from '../../constants';
 import PreviewContent from './Content';
+import DraggableTabBar, { TabBarItem } from '../DraggableTabBar';
 
-const { PREVIEW_TAB_BAR } = draggableTypes;
 const { TabPane } = Tabs;
 
 const Preview = () => {
@@ -24,42 +24,102 @@ const DraggableTabs: React.FC<DraggableTabsProps> = () => {
       title: 'Name',
       tabKey: '1',
       contentType: PREVIEW_CONTENT_TYPES.NAME,
-      content: { firstName: 'Pravin', lastName: 'Kumar' }
+      content: { firstName: 'Pravin', lastName: 'Kumar' },
     },
     {
       title: 'Address',
       tabKey: '2',
       contentType: PREVIEW_CONTENT_TYPES.ADDRESS,
-      content: null,
+      content: {
+        home: 'House 5, Villa 19, Mohammed Bin Zayed City, Abu Dhabi, U.A.E',
+        email: 'pravin.kumar@appsintegra.com',
+        phone: '+971495898987',
+        social: { linkedIn: 'pravinkumar', github: 'pravinkumar' },
+      },
     },
     {
       title: 'Experience',
       tabKey: '3',
       contentType: PREVIEW_CONTENT_TYPES.EXPERIENCE,
-      content: null,
+      content: {
+        roles: [
+          {
+            company: 'Andela',
+            startDate: '12/12/2020',
+            endDate: '12/12/2020',
+            wins: [
+              'Deployed services that helped users track their growth trajectory',
+              'Accomplished a shit ton of stuff, believe me I did',
+            ],
+          },
+          {
+            company: 'Jetpack',
+            startDate: '12/12/2020',
+            endDate: '12/12/2020',
+            wins: [
+              'Deployed services that helped users track their growth trajectory',
+              'Accomplished a shit ton of stuff, believe me I did',
+            ],
+          },
+        ],
+      },
     },
     {
       title: 'Education',
       tabKey: '4',
       contentType: PREVIEW_CONTENT_TYPES.EDUCATION,
-      content: null,
+      content: {
+        education: [
+          {
+            degree: 'B.Sc. Electrical Electronic Engineering',
+            school: 'University of Ibadan',
+            startYear: '12/12/2020',
+            endYear: '12/12/2020',
+          },
+          {
+            degree: 'M.Sc. Computing',
+            school: 'Georgia Tech',
+            startYear: '12/12/2020',
+            endYear: '12/12/2020',
+          },
+        ],
+      },
     },
     {
       title: 'Skills',
       tabKey: '5',
       contentType: PREVIEW_CONTENT_TYPES.SKILLS,
-      content: null,
+      content: {
+        categories: [
+          {
+            name: 'Languages',
+            skills: ['Python', 'Javascript'],
+          },
+          {
+            name: 'Tools',
+            skills: ['AWS', 'Docker'],
+          },
+        ],
+      },
     },
   ];
   const [tabs, setTabs] = useState<TabBarItem[]>(initialTabs);
+  const [activeKey, setActiveKey] = useState(initialTabs[0].tabKey);
 
-  const findTab = (key: string) => tabs.findIndex(tab => tab.tabKey === key); 
+  const changeActiveTab = setActiveKey;
+
+  const findTab = (key: string) => tabs.findIndex((tab) => tab.tabKey === key);
   const moveTab = (destinationKey: string, originalIndex: number) => {
     const destinationIndex = findTab(destinationKey);
-    setTabs(update (tabs, {
-      $splice: [[destinationIndex, 1], [originalIndex, 0, tabs[destinationIndex]]]
-    }))
-  }
+    setTabs(
+      update(tabs, {
+        $splice: [
+          [destinationIndex, 1],
+          [originalIndex, 0, tabs[destinationIndex]],
+        ],
+      }),
+    );
+  };
 
   const renderTabBar = (props: TabsProps, DefaultBar: React.ComponentClass) => (
     <DefaultBar {...props}>
@@ -82,60 +142,16 @@ const DraggableTabs: React.FC<DraggableTabsProps> = () => {
       renderTabBar={renderTabBar}
       tabPosition="left"
       size="small"
+      activeKey={activeKey}
     >
       {tabs.map((tab) => (
         <TabPane tab={tab.title} key={tab.tabKey}>
-            {PreviewContent(tabs)}
+          {PreviewContent(tabs, moveTab, findTab, changeActiveTab)}
         </TabPane>
       ))}
     </Tabs>
   );
 };
 
-const DraggableTabBar = ({
-  tabKey,
-  children,
-  index,
-  moveTab
-}: {
-  tabKey: string;
-  children: JSX.Element;
-  index: number;
-  moveTab: (destinationKey: string, originalIndex: number) => void;
-}) => {
-  const moveTabBar = (destinationKey: string) => { moveTab(destinationKey, index) };
-
-  const [{ isDragging }, drag] = useDrag({
-    item: { type: PREVIEW_TAB_BAR, tabKey },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  });
-
-  const [, drop] = useDrop({
-    accept: PREVIEW_TAB_BAR,
-    canDrop: () => false,
-    hover({ tabKey: draggedKey }: TabBarItemType) {
-      if (draggedKey !== tabKey) {
-        moveTabBar(draggedKey);
-      }
-    },
-  });
-
-  const opacity = isDragging ? 0 : 1;
-
-  return React.cloneElement(children, { ref: (node: any) => drag(drop(node)) });
-};
-
-interface TabBarItem {
-  tabKey: string;
-  title: string;
-  contentType: string; 
-  content: any;
-}
-
-interface TabBarItemType extends TabBarItem, DragObjectWithType {}
-
-interface DraggableTabsProps {
-}
+interface DraggableTabsProps {}
 export default Preview;

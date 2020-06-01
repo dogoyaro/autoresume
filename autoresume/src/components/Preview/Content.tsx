@@ -1,51 +1,81 @@
 import React from 'react';
-import { Typography, Card } from 'antd';
 import TabBarItem from './index';
-import { PREVIEW_CONTENT_TYPES } from '../../constants';
+import { draggableTypes, PREVIEW_CONTENT_TYPES } from '../../constants';
+import Draggable from '../hoc/Draggable';
+import ExperienceContent, {
+  ExperienceContentProps,
+} from './components/ExperienceContent';
+import FullNameContent, {
+  FullNameContentProps,
+} from './components/FullnameContent';
+import AddressContent, {
+  AddressContentProps,
+} from './components/AddressContent';
+import EducationContent, {
+  EducationContentProps,
+} from './components/EducationContent';
+import SkillsContent, { SkillsContentProps } from './components/SkillsContent';
+
+const { PREVIEW_CONTENT_CARD } = draggableTypes;
 
 const CONTENT_MAPPING = {
-  [PREVIEW_CONTENT_TYPES.NAME]: ({ firstName, lastName }: any) => (
+  [PREVIEW_CONTENT_TYPES.NAME]: ({
+    firstName,
+    lastName,
+  }: FullNameContentProps) => (
     <FullNameContent firstName={firstName} lastName={lastName} />
+  ),
+  [PREVIEW_CONTENT_TYPES.ADDRESS]: ({
+    home,
+    email,
+    phone,
+    social,
+  }: AddressContentProps) => (
+    <AddressContent home={home} email={email} phone={phone} social={social} />
+  ),
+  [PREVIEW_CONTENT_TYPES.EXPERIENCE]: ({ roles }: ExperienceContentProps) => (
+    <ExperienceContent roles={roles} />
+  ),
+  [PREVIEW_CONTENT_TYPES.EDUCATION]: ({ education }: EducationContentProps) => (
+    <EducationContent education={education} />
+  ),
+  [PREVIEW_CONTENT_TYPES.SKILLS]: ({ categories }: SkillsContentProps) => (
+    <SkillsContent categories={categories} />
   ),
 };
 
-const { Text } = Typography;
-
-const FullNameContent: React.FC<FullNameContent> = ({ firstName, lastName }) => {
-  return (
-    <Text code>
-      {firstName} {lastName}
-    </Text>
+const PreviewContent = (
+  tabs: TabBarItem[],
+  moveTab: any,
+  findTab: any,
+  changeActiveTab: any,
+) => {
+  return tabs.map(
+    ({ contentType, content, tabKey }: TabBarItem, index: number) => {
+      console.log('the tabkey, index', tabKey, index);
+      const contentDisplay =
+        CONTENT_MAPPING[contentType] && content
+          ? CONTENT_MAPPING[contentType](content)
+          : null;
+      return (
+        <Draggable
+          itemKey={tabKey}
+          index={findTab(tabKey)}
+          dragType={PREVIEW_CONTENT_CARD}
+          move={moveTab}
+        >
+          <div onClick={() => changeActiveTab(tabKey)}>{contentDisplay}</div>
+        </Draggable>
+      );
+    },
   );
-}
-
-const PreviewContent = (tabs: TabBarItem[]) => {
-  return tabs.map(({ contentType, content }: TabBarItem) => {
-    const contentDisplay = CONTENT_MAPPING[contentType]
-      ? CONTENT_MAPPING[contentType](content)
-      : null; 
-    return <TabContent>{contentDisplay}</TabContent>;
-  });
 };
-
-const TabContent = (props: any) => {
-  return <Card>{props.children}</Card>; 
-}
 
 interface TabBarItem {
   tabKey: string;
   title: string;
   contentType: string;
   content: any;
-}
-
-interface PreviewContentProps {
-  tabs: TabBarItem[]
-}
-
-interface FullNameContent {
-  firstName: string;
-  lastName: string;
 }
 
 export default PreviewContent;
