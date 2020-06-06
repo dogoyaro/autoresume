@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Tabs } from 'antd';
+import { Tabs, Button } from 'antd';
 import { TabsProps } from 'antd/lib/tabs';
 import { DndProvider } from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
@@ -10,10 +10,20 @@ import DraggableTabBar, { TabBarItem } from '../DraggableTabBar';
 
 const { TabPane } = Tabs;
 
-const Preview = () => {
+const Preview = ({ moveToView }: { moveToView: (value: number) => void }) => {
   return (
     <DndProvider backend={Backend}>
-      <DraggableTabs />
+      <div style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
+        <DraggableTabs />
+        <Button
+          size="large"
+          type="primary"
+          style={{ display: 'flex', alignSelf: 'flex-end', marginTop: 20 }}
+          onClick={() => moveToView(1)}
+        >
+          Print
+        </Button>
+      </div>
     </DndProvider>
   );
 };
@@ -138,18 +148,21 @@ const DraggableTabs: React.FC<DraggableTabsProps> = () => {
   );
 
   return (
-    <Tabs
-      renderTabBar={renderTabBar}
-      tabPosition="left"
-      size="small"
-      activeKey={activeKey}
-    >
-      {tabs.map((tab) => (
-        <TabPane tab={tab.title} key={tab.tabKey}>
-          {PreviewContent(tabs, moveTab, findTab, changeActiveTab)}
-        </TabPane>
-      ))}
-    </Tabs>
+    <>
+      <Tabs
+        renderTabBar={renderTabBar}
+        tabPosition="left"
+        size="small"
+        activeKey={activeKey}
+        style={{ width: '100%' }}
+      >
+        {tabs.map((tab) => (
+          <TabPane tab={tab.title} key={tab.tabKey}>
+            {PreviewContent(tabs, moveTab, findTab, changeActiveTab)}
+          </TabPane>
+        ))}
+      </Tabs>
+    </>
   );
 };
 

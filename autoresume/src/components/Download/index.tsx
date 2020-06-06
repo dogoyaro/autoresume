@@ -2,17 +2,18 @@ import React, { useState } from 'react';
 import { Steps } from 'antd';
 import FilterForm from '../FilterForm';
 import Preview from '../Preview'
+import ResumeDocument from '../Preview/components/ResumeDocument';
 
 const { Step } = Steps;
 
 const displays: { [key: number]: any } = {
   0: FilterForm,
   1: Preview,
-  2: FilterForm,
+  2: ResumeDocument,
 };
 
 const Download = () => {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(2);
   const CurrentView = displays[currentStep];
   return (
     <div
