@@ -255,14 +255,16 @@ class Accomplishment(db.Model):
             'description': accomplishment.description
         }
 
+    @classmethod
+    def get_accomplishments(cls, filter_args):
+        pass
+
     def set_accomplishments(self, id, accomplishment):
         pass
 
     def get_accomplishment(self, id):
         pass
 
-    def get_accomplishments(self, filter_args):
-        pass
 
 
 class Skill(db.Model):

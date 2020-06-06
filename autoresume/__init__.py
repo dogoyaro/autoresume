@@ -3,6 +3,7 @@ from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask_cors import CORS
 
 config = {'SQLALCHEMY_DATABASE_URI': 'sqlite:////tmp/test.db', 'DEBUG': True, 'TEMPLATES_AUTO_RELOAD': False,
           'SERVER_NAME': 'auto-resume-api', 'SQLALCHEMY_TRACK_MODIFICATIONS': False}
@@ -14,6 +15,7 @@ login = LoginManager()
 
 def create_app(test_config=None):
     app = Flask(__name__)
+    CORS(app)
     app.config.from_object(config)
 
     # TODO: Figure out env configs for multiple ennvironments
