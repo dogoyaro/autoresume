@@ -1,3 +1,4 @@
+const API_PREFIX = '/api/v1';
 export default {
   WINS_PATH: '/wins',
   ROLES_PATH: '/roles',
@@ -16,4 +17,8 @@ export const PREVIEW_CONTENT_TYPES = {
   EXPERIENCE: 'experience',
   EDUCATION: 'education',
   SKILLS: 'skills',
+}
+
+export const API_ENDOINTS = {
+  GET_ROLES: `${API_PREFIX}/jobs`,
 }

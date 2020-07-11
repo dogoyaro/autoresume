@@ -4,6 +4,7 @@ import GenericHeader from '../GenericHeader';
 import SearchInput, { SearchInputProps } from '../SearchInput';
 import RoleCard, { Role } from '../RoleCard';
 import AddRole from '../AddRole';
+import { useGetRoles } from '../../hooks';
 
 const { Content } = Layout;
 
@@ -27,6 +28,8 @@ const dummyRoles = [
 ];
 
 const Roles = (props: RolesProps) => {
+  const roles = useGetRoles();
+  console.log('the value of the roles');
   const { collapsed, setSiderCollapse } = props;
   return (
     <Layout style={{ height: '100vh' }}>
