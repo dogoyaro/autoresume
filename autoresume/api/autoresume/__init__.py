@@ -21,11 +21,14 @@ def create_app(test_config=None):
     # TODO: Figure out env configs for multiple ennvironments
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
     app.secret_key = 'super secret key'
+    app.config['SECRET'] = 'super_secret_key'
     db.init_app(app)
     migrate.init_app(app, db, render_as_batch=True)
     login.init_app(app)
 
     from . import api
+    from .token_auth.resource import auth_blueprint
+    app.register_blueprint(auth_blueprint)
     app.register_blueprint(api.api)
 
     from .error_handlers import InvalidData, InvalidCredentials
@@ -43,6 +46,7 @@ def create_app(test_config=None):
         return response
 
     from autoresume.models import User, Job, Accomplishment, Company
+    app.config['USER_MODEL'] = User
 
     @app.shell_context_processor
     def make_shell_context():

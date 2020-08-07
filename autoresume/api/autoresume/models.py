@@ -31,7 +31,8 @@ class User(UserMixin, db.Model):
             email = user.get('email')
             password = user.get('password')
 
-            new_user = User(first_name=first_name, last_name=last_name, email=email)
+            new_user = User(first_name=first_name,
+                            last_name=last_name, email=email)
             new_user.set_password(password)
 
             db.session.add(new_user)
@@ -52,7 +53,8 @@ class User(UserMixin, db.Model):
         if user is None or not user.check_password(user_data.get('password')):
             raise InvalidCredentials('Incorrect credentials')
         else:
-            success_message = {'status': 'success', 'user': User.serialize_user(user)}
+            success_message = {'status': 'success',
+                               'user': User.serialize_user(user)}
             login_user(user, remember=user_data.get('remember') or False)
             return success_message
 
@@ -88,6 +90,13 @@ class User(UserMixin, db.Model):
             'id': user.id,
         }
 
+    @classmethod
+    def get_token_payload(cls, user):
+        print('the user id', user['id'], type(user['id']))
+        return {
+            'id': user['id']
+        }
+
     def set_user(self, user):
         pass
 
@@ -105,7 +114,8 @@ class Job(db.Model):
     description = db.Column(db.String(256), nullable=True)
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    accomplishments = db.relationship('Accomplishment', backref='role', lazy=True)
+    accomplishments = db.relationship(
+        'Accomplishment', backref='role', lazy=True)
 
     @classmethod
     def set_job(cls, job={}):
@@ -219,7 +229,8 @@ class Accomplishment(db.Model):
 
         db.session.add(accomplishment)
         db.session.commit()
-        serialized_accomplishment = cls.serialize_accomplishment(accomplishment)
+        serialized_accomplishment = cls.serialize_accomplishment(
+            accomplishment)
         return serialized_accomplishment
         pass
 
@@ -264,7 +275,6 @@ class Accomplishment(db.Model):
 
     def get_accomplishment(self, id):
         pass
-
 
 
 class Skill(db.Model):
