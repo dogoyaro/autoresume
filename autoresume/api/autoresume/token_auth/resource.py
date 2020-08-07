@@ -12,7 +12,7 @@ class Register(Resource):
         user_model = current_app.config['USER_MODEL']
         user = user_model.create_user(content)
         token_payload = user_model.get_token_payload(user)
-        auth_token = generate_token(token_payload, current_app.config['SECRET'])
+        auth_token = generate_token(token_payload, current_app.config['SECRET_KEY'])
 
         return {
             'token': auth_token.decode('utf-8')

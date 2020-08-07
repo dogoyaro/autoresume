@@ -1,6 +1,6 @@
 import copy
-from autoresume import db, login
-from autoresume.error_handlers import InvalidData, InvalidCredentials
+from . import db, login
+from .error_handlers import InvalidData, InvalidCredentials
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, current_user, login_user, logout_user
