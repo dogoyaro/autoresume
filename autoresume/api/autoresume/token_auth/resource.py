@@ -17,7 +17,26 @@ class Register(Resource):
 
         return {
             'token': auth_token.decode('utf-8')
-        }
+        }, 200
+
+
+class Login(Resource):
+    def post(self):
+        content = request.get_json()
+        user_model = current_app.config['USER_MODEL']
+        user = user_model.authenticate(content)
+
+        if user:
+            token_payload = user_model.get_token_payload(user)
+            auth_token = generate_token(
+                token_payload, current_app.config['SECRET_KEY'])
+            return {
+                'token': auth_token.decode('utf-8')
+            }, 201
+
+        return {'message': 'Bad user credentials'}, 400
+
 
 
 api.add_resource(Register, '/token-register')
+api.add_resource(Login, '/token-login')

@@ -7,6 +7,10 @@ class UserClassStub:
     def get_token_payload(_, user):
         return user
 
+    @staticmethod
+    def authenticate(user):
+        return user
+
 
 test_config = {
     'SQLALCHEMY_DATABASE_URI': 'sqlite:////tmp/test.db',

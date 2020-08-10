@@ -64,6 +64,16 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    @staticmethod
+    def authenticate(user_details):
+        password = user_details['password']
+        email = user_details['email']
+
+        user = User.query.filter_by(email=email).first()
+        if user is None or not user.check_password(password):
+            return None
+        return User.serialize_user(user)
+
     @classmethod
     def sanitize_user(cls, user):
         error = ''
