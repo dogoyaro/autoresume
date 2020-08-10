@@ -8,9 +8,9 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 
 is_production = os.getenv('FLASK_ENV') == 'production'
-env_file = '.env.production' if is_production else '.env'
+ENV_FILE = '.env.production' if is_production else '.env'
 APP_ROOT = os.path.join(os.path.dirname(__file__), '..')
-dotenv_path = os.path.join(APP_ROOT, env_file)
+dotenv_path = os.path.join(APP_ROOT, ENV_FILE)
 load_dotenv(dotenv_path)
 
 
@@ -28,7 +28,6 @@ def create_app(test_config=None):
 
     if test_config is not None:
         app.config.from_mapping(test_config)
-
 
     db.init_app(app)
     migrate.init_app(app, db, render_as_batch=True)
