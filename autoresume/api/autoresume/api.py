@@ -1,6 +1,7 @@
-from flask import Blueprint, jsonify, request
-from flask_login import login_required, current_user
+from flask import Blueprint, jsonify, request, g
+from flask_login import current_user
 from .models import Job, Accomplishment, Skill, Company, User
+from .token_auth import login_required
 
 api = Blueprint('api/v1', __name__, url_prefix='/api/v1')
 
